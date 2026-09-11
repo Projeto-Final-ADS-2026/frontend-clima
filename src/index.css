@@ -1,0 +1,49 @@
+/* src/index.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Typography base */
+  body {
+    @apply font-sans text-slate-900;
+    font-feature-settings: 'rlig' 1 'calt' 1;
+  }
+
+  h1 {
+    @apply font-bold tracking-tight;
+  }
+
+  h2 {
+    @apply font-bold tracking-tight;
+  }
+
+  h3 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  /* Cards com hover effect sutil */
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-slate-200;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-md hover:border-teal-200;
+  }
+
+  /* Button base */
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply bg-slate-200 text-slate-900 hover:bg-slate-300 disabled:opacity-50;
+  }
+}

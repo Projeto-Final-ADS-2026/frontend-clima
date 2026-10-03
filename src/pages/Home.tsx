@@ -19,18 +19,32 @@ export const Home: React.FC = () => {
   }, []);
 
   const handleSearch = async (city: string) => {
-    setIsLoading(true);
-    setError(null);
+  if (!city.trim()) {
+    setError('Digite o nome de uma cidade');
+    return;
+  }
+  
+  setIsLoading(true);
+  setError(null);
+  setWeather(null);
+  
+  try {
+    const data = await fetchWeatherSimulated(city);
     
-    try {
-      const data = await fetchWeatherSimulated(city, 500);
-      setWeather(data);
-    } catch (err) {
-      setError('Não foi possível carregar os dados');
-    } finally {
-      setIsLoading(false);
+    if (!data) {
+      setError(`Cidade "${city}" não encontrada. Tente: São Paulo, Rio de Janeiro, Curitiba ou Manaus`);
+      return;
     }
-  };
+    
+    setWeather(data);
+    
+  } catch (err) {
+    setError('Erro ao conectar com servidor.');
+    setWeather(null);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">

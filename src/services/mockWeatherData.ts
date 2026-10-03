@@ -1,5 +1,3 @@
-// src/services/mockWeatherData.ts
-
 import { WeatherData, ForecastDay } from '../types/weather';
 
 export const mockWeatherData: Record<string, WeatherData> = {
@@ -134,13 +132,40 @@ export const getWeatherByCity = (cityName: string): WeatherData => {
 };
 
 // Função para simular delay de rede
-export const fetchWeatherSimulated = async (
-  cityName: string,
-  delay: number = 300
-): Promise<WeatherData> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(getWeatherByCity(cityName));
-    }, delay);
-  });
-};
+export async function fetchWeatherSimulated(city: string): Promise<WeatherData | null> {
+    try {
+        const response = await fetch(`http://localhost:8080/api/clima/${city}`);
+        if (!response.ok) {
+            throw new Error('Cidade não encontrada');
+        }
+        
+        const data = await response.json();
+        
+        const mappedData: WeatherData = {
+            city: data.cityName,                    
+            country: data.country === 'BR' ? 'Brasil' : data.country, 
+            temperature: Math.round(data.temp),   
+            feelsLike: Math.round(data.feelsLike),
+            condition: capitalizeFirstLetter(data.description),
+            humidity: data.humidity,
+            windSpeed: Math.round(data.windSpeed),
+            windDirection: 'N',                    
+            pressure: data.pressure,
+            uvIndex: 0,                           
+            visibility: Math.round(data.visibility / 1000), 
+            cloudCover: 0,                        
+            lastUpdated: new Date().toISOString(),
+        };
+        
+        return mappedData;
+        
+    } catch (error) {
+        console.error('Erro ao buscar clima:', error);
+        return null;
+    }
+}
+
+// Função auxiliar pra capitalizar
+function capitalizeFirstLetter(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}

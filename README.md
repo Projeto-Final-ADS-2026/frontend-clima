@@ -8,7 +8,7 @@ Este é um projeto de aprendizado que demonstra a progressão de uma aplicação
 
 - **Entrega 1:** Interface visual com dados mockados ✅
 - **Entrega 2:** Backend com API real
-- **Entrega 3:** Banco de dados e histórico
+- **Entrega 3:** Banco de dados e histórico ✅
 - **Entrega 4:** Autenticação, alertas e comparação
 
 ## 🚀 Tecnologias
@@ -59,13 +59,19 @@ src/
 │   ├── SearchBar.tsx     # Buscador de cidades
 │   ├── CurrentWeather.tsx # Clima atual (destaque)
 │   ├── WeatherDetails.tsx # Grid de detalhes
-│   └── ForecastChart.tsx  # Previsão 5 dias
+│   ├── ForecastChart.tsx  # Previsão 5 dias
+│   ├── SearchHistory.tsx  # Histórico de buscas (Entrega 3)
+│   ├── FavoritesList.tsx  # Cidades favoritas (Entrega 3)
+│   └── TemperatureTrend.tsx # Tendência de temperatura (Entrega 3)
 ├── pages/                # Páginas da aplicação
 │   └── Home.tsx          # Página principal
 ├── services/             # Lógica de negócio
-│   └── mockWeatherData.ts # Dados simulados
+│   ├── mockWeatherData.ts # Dados simulados
+│   └── historyApi.ts     # Cliente da API de histórico e favoritos
 ├── types/                # Tipos TypeScript
-│   └── weather.ts        # Interfaces
+│   ├── weather.ts        # Interfaces do clima
+│   └── history.ts        # Interfaces de histórico, favoritos e tendência
+├── vite-env.d.ts         # Tipagem das variáveis de ambiente do Vite
 ├── App.tsx              # Componente raiz
 ├── App.css              # Estilos customizados
 ├── main.tsx             # Entry point
@@ -101,6 +107,14 @@ src/
 ✅ Tipagem completa TypeScript  
 ✅ Acessibilidade básica  
 
+## 🎯 Features da Entrega 3
+
+✅ Histórico das últimas buscas de clima (com opção de limpar)  
+✅ Cidades favoritas (adicionar/remover pela estrela no clima atual)  
+✅ Gráfico de tendência de temperatura por cidade, a partir do histórico  
+✅ Integração com a API do backend para persistência no MySQL  
+✅ Falhas no histórico, favoritos ou tendência não bloqueiam a busca de clima  
+
 ## 🔧 Scripts Disponíveis
 
 ```bash
@@ -128,12 +142,12 @@ npm run format       # Prettier (se configurado)
 - [ ] CORS configurado
 - [ ] Swagger/OpenAPI docs
 
-### Entrega 3: Banco de Dados
-- [ ] Criar schema MySQL
-- [ ] Entity mapping JPA
-- [ ] Histórico de buscas
-- [ ] Favoritos de cidades
-- [ ] Gráfico de tendência de temperatura
+### Entrega 3: Banco de Dados ✅
+- [x] Criar schema MySQL
+- [x] Entity mapping JPA
+- [x] Histórico de buscas
+- [x] Favoritos de cidades
+- [x] Gráfico de tendência de temperatura
 
 ### Entrega 4: Funcionalidades Avançadas
 - [ ] Autenticação JWT
@@ -150,6 +164,18 @@ npm run format       # Prettier (se configurado)
 **Entrega 2 em diante:**
 - [OpenWeatherMap API](https://openweathermap.org/api) - Dados de clima em tempo real
 - [Geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API) - Localização do usuário
+
+**Backend próprio (`VITE_API_BASE_URL`, padrão `http://localhost:8080`):**
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | `/api/clima/{cidade}` | Clima atual da cidade |
+| GET | `/api/historico?limite=10` | Últimas buscas |
+| DELETE | `/api/historico` | Limpa o histórico |
+| GET | `/api/historico/tendencia/{cidade}?limite=20` | Pontos para o gráfico de tendência |
+| GET | `/api/favoritos` | Lista cidades favoritas |
+| POST | `/api/favoritos` | Adiciona favorito (`{ cityName, country }`) |
+| DELETE | `/api/favoritos/{id}` | Remove favorito |
 
 ## 🧪 Testes
 
@@ -225,4 +251,4 @@ Sugestões e feedback são bem-vindos!
 
 ---
 
-**Status:** Entrega 1 ✅ | Entrega 2 ⏳ | Entrega 3 ⏳ | Entrega 4 ⏳
+**Status:** Entrega 1 ✅ | Entrega 2 ⏳ | Entrega 3 ✅ | Entrega 4 ⏳

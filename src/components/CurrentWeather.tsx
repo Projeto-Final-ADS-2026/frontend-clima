@@ -1,10 +1,12 @@
 // src/components/CurrentWeather.tsx
 
 import { WeatherData } from '../types/weather';
-import { Cloud, CloudRain, Sun, CloudDrizzle, Wind } from 'lucide-react';
+import { Cloud, CloudRain, Sun, CloudDrizzle, Wind, Star } from 'lucide-react';
 
 interface CurrentWeatherProps {
   data: WeatherData;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
 const getWeatherIcon = (condition: string) => {
@@ -25,14 +27,32 @@ const getWeatherIcon = (condition: string) => {
   return <Sun size={120} className="text-amber-400" />;
 };
 
-export const CurrentWeather: React.FC<CurrentWeatherProps> = ({ data }) => {
+export const CurrentWeather: React.FC<CurrentWeatherProps> = ({
+  data,
+  isFavorite = false,
+  onToggleFavorite,
+}) => {
   return (
     <div className="bg-gradient-to-br from-teal-50 to-blue-50 rounded-2xl p-8 md:p-12 shadow-sm border border-teal-100">
       {/* Header com localização */}
       <div className="flex items-start justify-between mb-8">
-        <div>
-          <h2 className="text-3xl font-bold text-slate-900">{data.city}</h2>
-          <p className="text-slate-600 mt-1">{data.country}</p>
+        <div className="flex items-start gap-3">
+          <div>
+            <h2 className="text-3xl font-bold text-slate-900">{data.city}</h2>
+            <p className="text-slate-600 mt-1">{data.country}</p>
+          </div>
+          {onToggleFavorite && (
+            <button
+              type="button"
+              onClick={onToggleFavorite}
+              aria-pressed={isFavorite}
+              aria-label={isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+              title={isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+              className="mt-1 text-amber-400 hover:text-amber-500 transition-colors"
+            >
+              <Star size={26} fill={isFavorite ? 'currentColor' : 'none'} />
+            </button>
+          )}
         </div>
         <span className="text-sm text-slate-500">
           Atualizado agora

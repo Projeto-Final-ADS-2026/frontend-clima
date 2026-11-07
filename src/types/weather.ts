@@ -3,6 +3,7 @@
 export interface WeatherData {
   city: string;
   country: string;
+  countryCode?: string;
   temperature: number;
   feelsLike: number;
   condition: string;

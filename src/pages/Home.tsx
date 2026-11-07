@@ -5,17 +5,99 @@ import { SearchBar } from '../components/SearchBar';
 import { CurrentWeather } from '../components/CurrentWeather';
 import { WeatherDetails } from '../components/WeatherDetails';
 import { ForecastChart } from '../components/ForecastChart';
+import { SearchHistory } from '../components/SearchHistory';
+import { FavoritesList } from '../components/FavoritesList';
+import { TemperatureTrend } from '../components/TemperatureTrend';
 import { WeatherData } from '../types/weather';
+import { Favorite, HistoryItem, TrendPoint } from '../types/history';
 import { fetchWeatherSimulated, mockForecast } from '../services/mockWeatherData';
+import {
+  addFavorite,
+  clearHistory,
+  getFavorites,
+  getHistory,
+  getTrend,
+  removeFavorite,
+} from '../services/historyApi';
 
 export const Home: React.FC = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
+  const [trend, setTrend] = useState<TrendPoint[]>([]);
 
-  // Carregar clima padrão ao montar
+  const currentFavorite = weather
+    ? favorites.find((f) => f.cityName.toLowerCase() === weather.city.toLowerCase())
+    : undefined;
+
+  // Histórico, favoritos e tendência vêm do banco; se a API falhar, a busca de clima continua funcionando
+  const refreshHistory = async () => {
+    try {
+      setHistory(await getHistory(10));
+    } catch (err) {
+      console.error('Erro ao carregar histórico:', err);
+    }
+  };
+
+  const refreshFavorites = async () => {
+    try {
+      setFavorites(await getFavorites());
+    } catch (err) {
+      console.error('Erro ao carregar favoritos:', err);
+    }
+  };
+
+  const refreshTrend = async (city: string) => {
+    try {
+      setTrend(await getTrend(city, 20));
+    } catch (err) {
+      console.error('Erro ao carregar tendência:', err);
+      setTrend([]);
+    }
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!weather) return;
+    try {
+      if (currentFavorite) {
+        await removeFavorite(currentFavorite.id);
+      } else {
+        await addFavorite(weather.city, weather.countryCode ?? weather.country);
+      }
+      await refreshFavorites();
+    } catch (err) {
+      console.error('Erro ao atualizar favoritos:', err);
+      setError('Não foi possível atualizar os favoritos.');
+    }
+  };
+
+  const handleRemoveFavorite = async (id: number) => {
+    try {
+      await removeFavorite(id);
+      await refreshFavorites();
+    } catch (err) {
+      console.error('Erro ao remover favorito:', err);
+      setError('Não foi possível remover o favorito.');
+    }
+  };
+
+  const handleClearHistory = async () => {
+    try {
+      await clearHistory();
+      setHistory([]);
+      setTrend([]);
+    } catch (err) {
+      console.error('Erro ao limpar histórico:', err);
+      setError('Não foi possível limpar o histórico.');
+    }
+  };
+
+  // Carregar clima padrão, histórico e favoritos ao montar
   useEffect(() => {
     handleSearch('São Paulo');
+    refreshFavorites();
   }, []);
 
   const handleSearch = async (city: string) => {
@@ -37,7 +119,10 @@ export const Home: React.FC = () => {
     }
     
     setWeather(data);
-    
+
+    // O backend grava a consulta no histórico; recarrega a lista e a tendência da cidade
+    await Promise.all([refreshHistory(), refreshTrend(data.city)]);
+
   } catch (err) {
     setError('Erro ao conectar com servidor.');
     setWeather(null);
@@ -90,7 +175,11 @@ export const Home: React.FC = () => {
           <>
             {/* Clima Atual */}
             <section>
-              <CurrentWeather data={weather} />
+              <CurrentWeather
+                data={weather}
+                isFavorite={!!currentFavorite}
+                onToggleFavorite={handleToggleFavorite}
+              />
             </section>
 
             {/* Detalhes */}
@@ -104,6 +193,25 @@ export const Home: React.FC = () => {
             {/* Previsão */}
             <section>
               <ForecastChart forecast={mockForecast} />
+            </section>
+
+            {/* Tendência de temperatura (histórico) */}
+            <section>
+              <TemperatureTrend city={weather.city} points={trend} />
+            </section>
+
+            {/* Favoritos e histórico */}
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <FavoritesList
+                favorites={favorites}
+                onSelect={handleSearch}
+                onRemove={handleRemoveFavorite}
+              />
+              <SearchHistory
+                items={history}
+                onSelect={handleSearch}
+                onClear={handleClearHistory}
+              />
             </section>
 
             {/* Info Footer */}

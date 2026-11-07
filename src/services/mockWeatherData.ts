@@ -130,7 +130,7 @@ export const getWeatherByCity = (cityName: string): WeatherData => {
   const cities = Object.values(mockWeatherData);
   return cities[Math.floor(Math.random() * cities.length)];
 };
-
+  
 // Função para simular delay de rede
 export async function fetchWeatherSimulated(city: string): Promise<WeatherData | null> {
     try {
@@ -143,7 +143,8 @@ export async function fetchWeatherSimulated(city: string): Promise<WeatherData |
         
         const mappedData: WeatherData = {
             city: data.cityName,                    
-            country: data.country === 'BR' ? 'Brasil' : data.country, 
+            country: data.country === 'BR' ? 'Brasil' : data.country,
+            countryCode: data.country,
             temperature: Math.round(data.temp),   
             feelsLike: Math.round(data.feelsLike),
             condition: capitalizeFirstLetter(data.description),

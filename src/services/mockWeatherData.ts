@@ -1,4 +1,5 @@
 import { WeatherData, ForecastDay } from '../types/weather';
+import { request } from './http';
 
 export const mockWeatherData: Record<string, WeatherData> = {
   'são paulo': {
@@ -134,12 +135,7 @@ export const getWeatherByCity = (cityName: string): WeatherData => {
 // Função para simular delay de rede
 export async function fetchWeatherSimulated(city: string): Promise<WeatherData | null> {
     try {
-        const response = await fetch(`http://localhost:8080/api/clima/${city}`);
-        if (!response.ok) {
-            throw new Error('Cidade não encontrada');
-        }
-        
-        const data = await response.json();
+        const data = await request<any>(`/api/clima/${encodeURIComponent(city)}`);
         
         const mappedData: WeatherData = {
             city: data.cityName,                    

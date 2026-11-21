@@ -33,6 +33,7 @@ O backend (Java/Spring Boot + MySQL) está em outro repositório: [`back-end-cli
 - Sessão mantida ao recarregar a página (token JWT no `localStorage`, validado em `/api/auth/me`)
 - Botão **Sair** e saudação com o nome do usuário
 - Favoritos e histórico **por usuário**
+- Logout automático só quando o servidor confirma que o token é inválido ou expirou. Um 401 isolado, por exemplo causado por um erro do servidor, não derruba a sessão
 
 **Ainda não existem:** alertas customizados, comparação entre cidades, notificações, dashboard personalizado e deploy em produção.
 
@@ -61,7 +62,7 @@ cp .env.example .env.local
 # Rodar em desenvolvimento
 npm run dev
 ```
-A aplicação abre em `http://localhost:3000`. O backend precisa estar em `http://localhost:8080` e liberar a origem do frontend no CORS (`CORS_ALLOWED_ORIGINS=http://localhost:3000`).
+A aplicação abre em `http://localhost:3000`. O backend precisa estar em `http://localhost:8080`. A origem `http://localhost:3000` já vem liberada no CORS dele; para outra porta ou domínio, defina `CORS_ALLOWED_ORIGINS` no backend.
 
 ### Primeiro acesso
 1. Abra `http://localhost:3000`. Sem sessão, você cai em `/login`.
@@ -143,8 +144,8 @@ Base: `VITE_API_BASE_URL` (padrão `http://localhost:8080`). Todas as rotas abai
 - O token fica no `localStorage`, o que é simples, mas fica exposto a ataques de XSS.
 
 ## 🐛 Troubleshooting
-- **Erro de CORS no navegador:** confirme que o backend foi iniciado com `CORS_ALLOWED_ORIGINS` incluindo a origem do frontend (`http://localhost:3000`) e reinicie-o.
-- **Volta para o login:** verifique se o backend está no ar e se o `JWT_SECRET` não mudou desde o último login.
+- **Erro de CORS no navegador:** confirme que a origem do frontend está em `CORS_ALLOWED_ORIGINS` no backend (`http://localhost:3000` já vem por padrão) e reinicie-o.
+- **Volta para o login:** o token foi rejeitado. Verifique se o `JWT_SECRET` do backend não mudou desde o último login e se ele não expirou (24 horas).
 - **Porta 3000 em uso:** troque `server.port` em `vite.config.ts` e ajuste o CORS do backend.
 - **`npm run build` falha por `terser`:** rode `npm install`, ele está nas dependências de desenvolvimento.
 

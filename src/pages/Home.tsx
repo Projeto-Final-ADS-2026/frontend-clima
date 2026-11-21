@@ -8,6 +8,8 @@ import { ForecastChart } from '../components/ForecastChart';
 import { SearchHistory } from '../components/SearchHistory';
 import { FavoritesList } from '../components/FavoritesList';
 import { TemperatureTrend } from '../components/TemperatureTrend';
+import { LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import { WeatherData } from '../types/weather';
 import { Favorite, HistoryItem, TrendPoint } from '../types/history';
 import { fetchWeatherSimulated, mockForecast } from '../services/mockWeatherData';
@@ -21,6 +23,7 @@ import {
 } from '../services/historyApi';
 
 export const Home: React.FC = () => {
+  const { user, logout } = useAuth();
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -142,6 +145,15 @@ export const Home: React.FC = () => {
               <p className="text-slate-600 text-sm mt-1">
                 Previsão do tempo detalhada
               </p>
+            </div>
+            <div className="flex items-center gap-3 text-sm text-slate-600">
+              <span>Olá, <strong className="text-slate-900">{user?.name}</strong></span>
+              <button
+                onClick={logout}
+                className="inline-flex items-center gap-1 rounded-lg border border-slate-300 px-3 py-1.5 hover:bg-slate-100"
+              >
+                <LogOut size={16} /> Sair
+              </button>
             </div>
           </div>
           

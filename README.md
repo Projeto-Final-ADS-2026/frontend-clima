@@ -9,7 +9,7 @@ Este é um projeto de aprendizado que demonstra a progressão de uma aplicação
 - **Entrega 1:** Interface visual com dados mockados ✅
 - **Entrega 2:** Backend com API real
 - **Entrega 3:** Banco de dados e histórico ✅
-- **Entrega 4:** Autenticação, alertas e comparação
+- **Entrega 4:** Autenticação JWT (escopo atual); alertas, comparação, notificações, dashboard e deploy ficam para depois
 
 ## 🚀 Tecnologias
 
@@ -19,6 +19,7 @@ Este é um projeto de aprendizado que demonstra a progressão de uma aplicação
 - **Vite** - Build tool (rápido!)
 - **Tailwind CSS** - Utility-first CSS
 - **Lucide React** - Icons
+- **React Router** - Rotas (login, cadastro e área protegida)
 - **Node.js** - Runtime
 
 ### Backend (Próximas Entregas)
@@ -150,7 +151,7 @@ npm run format       # Prettier (se configurado)
 - [x] Gráfico de tendência de temperatura
 
 ### Entrega 4: Funcionalidades Avançadas
-- [ ] Autenticação JWT
+- [x] Autenticação JWT (cadastro, login, rotas protegidas; favoritos e histórico por usuário)
 - [ ] Alertas customizados
 - [ ] Comparação entre cidades
 - [ ] Notificações
@@ -251,4 +252,4 @@ Sugestões e feedback são bem-vindos!
 
 ---
 
-**Status:** Entrega 1 ✅ | Entrega 2 ⏳ | Entrega 3 ✅ | Entrega 4 ⏳
+**Status:** Entrega 1 ✅ | Entrega 2 ⏳ | Entrega 3 ✅ | Entrega 4 🚧 (autenticação ✅)

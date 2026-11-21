@@ -17,6 +17,18 @@ export const setUnauthorizedHandler = (handler: (() => void) | null) => {
   onUnauthorized = handler;
 };
 
+// Só desloga se o servidor confirmar que o token é inválido; um 401 isolado não derruba a sessão.
+async function tokenIsValid(token: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${BASE_URL}/api/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.status !== 401;
+  } catch {
+    return true; // sem conexão não prova que o token é inválido
+  }
+}
+
 export async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   const token = getToken();
@@ -26,7 +38,7 @@ export async function request<T>(path: string, init: RequestInit = {}): Promise<
 
   const response = await fetch(`${BASE_URL}${path}`, { ...init, headers });
 
-  if (response.status === 401 && token) {
+  if (response.status === 401 && token && !(await tokenIsValid(token))) {
     onUnauthorized?.();
   }
   if (!response.ok) {
